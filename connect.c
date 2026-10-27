@@ -15,7 +15,7 @@ int main(int argc, char const *argv[])
 	char *mysql_db;
 	char *sql = "select * from information_schema.tables order by table_name";
 	int r = 0;
-	MYSQL mysql;
+	MYSQL *mysql;
 
 	mysql_user = malloc(31);
 	mysql_host = malloc(31);
@@ -32,22 +32,22 @@ int main(int argc, char const *argv[])
 	printf("mysql_pwd=\"%s\"\n", mysql_pwd);
 	printf("mysql_db=\"%s\"\n", mysql_db);
 
-	mysql_init(&mysql);
+	mysql = mysql_init(NULL);
 
-	printf("mysql=%p\n", (void *)&mysql);
+	printf("mysql=%p\n", mysql);
 
-	if (!mysql_real_connect(&mysql, mysql_host, mysql_user, mysql_pwd, mysql_db, 0, NULL, 0))
+	if (!mysql_real_connect(mysql, mysql_host, mysql_user, mysql_pwd, mysql_db, 0, NULL, 0))
 	{
-		fprintf(stderr, "Failed to connect to database: Error: %s\n", mysql_error(&mysql));
+		fprintf(stderr, "Failed to connect to database: Error: %s\n", mysql_error(mysql));
 	}
 
-	r = mysql_real_query(&mysql, sql, strlen(sql));
+	r = mysql_real_query(mysql, sql, strlen(sql));
 	if (r == 0)
 	{
-		printf("mysql_field_count=%ul\n", mysql_field_count(&mysql));
+		printf("mysql_field_count=%ul\n", mysql_field_count(mysql));
 	}
 
-	mysql_close(&mysql);
+	mysql_close(mysql);
 
 	return 0;
 }
